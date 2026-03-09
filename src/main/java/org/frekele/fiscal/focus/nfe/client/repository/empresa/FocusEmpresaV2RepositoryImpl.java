@@ -1,0 +1,173 @@
+package org.frekele.fiscal.focus.nfe.client.repository.empresa;
+
+import org.frekele.fiscal.focus.nfe.client.auth.FocusNFeAuth;
+import org.frekele.fiscal.focus.nfe.client.core.FocusNFe;
+import org.frekele.fiscal.focus.nfe.client.filter.RequestHeaderInfoFilter;
+import org.frekele.fiscal.focus.nfe.client.filter.RequestLoggingFilter;
+import org.frekele.fiscal.focus.nfe.client.filter.ResponseLoggingFilter;
+import org.frekele.fiscal.focus.nfe.client.model.request.empresa.body.EmpresaBodyRequest;
+import org.frekele.fiscal.focus.nfe.client.model.response.empresa.EmpresaResponse;
+import org.frekele.fiscal.focus.nfe.client.util.FocusNFeUtils;
+import org.jboss.resteasy.client.jaxrs.ResteasyClient;
+import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
+
+import javax.inject.Inject;
+
+/**
+ * Classe com implementação das chamadas para API V2 NF-e.
+ *
+ * @author frekele - Leandro Kersting de Freitas
+ */
+@FocusNFe
+public class FocusEmpresaV2RepositoryImpl implements FocusEmpresaV2Repository {
+
+    private static final long serialVersionUID = 1L;
+
+    private final ResteasyClient client;
+
+    private final FocusNFeAuth auth;
+
+    @Inject
+    public FocusEmpresaV2RepositoryImpl(@FocusNFe ResteasyClient client, @FocusNFe FocusNFeAuth auth) {
+        FocusNFeUtils.throwInjection(client, auth);
+        FocusNFeUtils.throwAuth(auth);
+        this.client = client
+            .register(RequestLoggingFilter.class)
+            .register(ResponseLoggingFilter.class)
+            .register(RequestHeaderInfoFilter.class);
+        this.auth = auth;
+    }
+
+    ResteasyClient getClient() {
+        return client;
+    }
+
+    FocusNFeAuth getAuth() {
+        return auth;
+    }
+
+    private FocusEmpresaV2ProxyClient getProxyClient() {
+        ResteasyClient client = this.getClient();
+        ResteasyWebTarget webTarget = client.target(this.getAuth().getEnvironment().getTargetUrl());
+        return webTarget.proxy(FocusEmpresaV2ProxyClient.class);
+    }
+
+    /**
+     * POST - Emitir NFe utilizando dados simplificados.
+     * Este processo é assíncrono. Ou seja, após a emissão a nota será enfileirada para processamento.
+     * Cria uma nota fiscal e a envia para processamento.
+     * Exemplo de requisição: POST https://api.focusnfe.com.br/v2/nfe?ref=REFERENCIA
+     */
+    @Override
+    public EmpresaResponse cadastrar(EmpresaBodyRequest bodyRequest) {
+        FocusNFeUtils.throwObject(bodyRequest, "EmpresaBodyRequest");
+        FocusNFeUtils.throwBeanValidation(bodyRequest);
+        FocusEmpresaV2ProxyClient proxyClient = this.getProxyClient();
+        return proxyClient.cadastrar(this.getAuth().getBasicAuthorization(), bodyRequest);
+    }
+
+
+    @Override
+    public EmpresaResponse consultar(String id) {
+        FocusNFeUtils.throwObject(id, "id");
+        FocusEmpresaV2ProxyClient proxyClient = this.getProxyClient();
+        return proxyClient.consultar(this.getAuth().getBasicAuthorization(), id);
+    }
+
+    @Override
+    public EmpresaResponse alterar(String id, EmpresaBodyRequest bodyRequest) {
+        FocusNFeUtils.throwObject(id, "id");
+        FocusNFeUtils.throwObject(bodyRequest, "EmpresaBodyRequest");
+        FocusNFeUtils.throwBeanValidation(bodyRequest);
+        FocusEmpresaV2ProxyClient proxyClient = this.getProxyClient();
+        return proxyClient.alterar(this.getAuth().getBasicAuthorization(), id, bodyRequest);
+    }
+
+    @Override
+    public EmpresaResponse excluir(String id) {
+        FocusNFeUtils.throwObject(id, "id");
+        FocusEmpresaV2ProxyClient proxyClient = this.getProxyClient();
+        return proxyClient.excluir(this.getAuth().getBasicAuthorization(), id);
+    }
+    /*
+     *//**
+     * GET - Consultar o status de NFe emitidas.
+     * Este processo é assíncrono. Ou seja, após a emissão a nota será enfileirada para processamento.
+     * Consulta a nota fiscal com a referência informada.
+     * Exemplo de requisição: GET https://api.focusnfe.com.br/v2/nfe/REFERENCIA
+     *//*
+    @Override
+    public NFeConsultarResponse consultar(String referencia) {
+        FocusNFeUtils.throwObject(referencia, "referencia");
+        FocusEmpresaV2ProxyClient proxyClient = this.getProxyClient();
+        return proxyClient.consultar(this.getAuth().getBasicAuthorization(), referencia);
+    }
+
+    *//**
+     * GET - Consultar o status de NFe emitidas.
+     * Este processo é assíncrono. Ou seja, após a emissão a nota será enfileirada para processamento.
+     * Consulta a nota fiscal com a referência informada e o seu status de processamento.
+     * Exemplo de requisição: GET https://api.focusnfe.com.br/v2/nfe/REFERENCIA?completa=(0|1)
+     *//*
+    @Override
+    public NFeConsultarResponse consultarNFeCompleta(String referencia) {
+        FocusNFeUtils.throwObject(referencia, "referencia");
+        FocusEmpresaV2ProxyClient proxyClient = this.getProxyClient();
+        return proxyClient.consultar(this.getAuth().getBasicAuthorization(), referencia, 1);
+    }
+
+    *//**
+     * DELETE - Cancelar NFe.
+     * Cancela uma nota fiscal com a referência informada.
+     * Exemplo de requisição: DELETE https://api.focusnfe.com.br/v2/nfe/REFERENCIA
+     *//*
+    @Override
+    public NFeCancelarResponse cancelar(String referencia, NFeCancelarBodyRequest bodyRequest) {
+        FocusNFeUtils.throwObject(referencia, "referencia");
+        FocusNFeUtils.throwObject(bodyRequest, "NFeCancelarBodyRequest");
+        FocusNFeUtils.throwBeanValidation(bodyRequest);
+        FocusEmpresaV2ProxyClient proxyClient = this.getProxyClient();
+        return proxyClient.cancelar(this.getAuth().getBasicAuthorization(), referencia, bodyRequest);
+    }
+
+    *//**
+     * POST - Emitir Carta de Correção.
+     * Cria uma carta de correção para a nota fiscal com a referência informada.
+     * Exemplo de requisição: POST https://api.focusnfe.com.br/v2/nfe/REFERENCIA/carta_correcao
+     *//*
+    @Override
+    public NFeCCeResponse emitirCCe(String referencia, NFeCCeBodyRequest bodyRequest) {
+        FocusNFeUtils.throwObject(referencia, "referencia");
+        FocusNFeUtils.throwObject(bodyRequest, "NFeCCeBodyRequest");
+        FocusNFeUtils.throwBeanValidation(bodyRequest);
+        FocusEmpresaV2ProxyClient proxyClient = this.getProxyClient();
+        return proxyClient.emitirCCe(this.getAuth().getBasicAuthorization(), referencia, bodyRequest);
+    }
+
+    *//**
+     * POST - Encaminhar uma NFe por email.
+     * Envia um email com uma cópia da nota fiscal com a referência informada.
+     * Exemplo de requisição: POST https://api.focusnfe.com.br/v2/nfe/REFERENCIA/email
+     *//*
+    @Override
+    public NFeEmailResponse enviarEmail(String referencia, NFeEmailBodyRequest bodyRequest) {
+        FocusNFeUtils.throwObject(referencia, "referencia");
+        FocusNFeUtils.throwObject(bodyRequest, "NFeEmailBodyRequest");
+        FocusNFeUtils.throwBeanValidation(bodyRequest);
+        FocusEmpresaV2ProxyClient proxyClient = this.getProxyClient();
+        return proxyClient.enviarEmail(this.getAuth().getBasicAuthorization(), referencia, bodyRequest);
+    }
+
+    *//**
+     * POST - Inutilizar uma faixa de numeração de NFe.
+     * Inutiliza uma numeração da nota fiscal.
+     * Exemplo de requisição: POST https://api.focusnfe.com.br/v2/nfe/inutilizacao
+     *//*
+    @Override
+    public NFeInutilizarResponse inutilizar(NFeInutilizarBodyRequest bodyRequest) {
+        FocusNFeUtils.throwObject(bodyRequest, "NFeInutilizarBodyRequest");
+        FocusNFeUtils.throwBeanValidation(bodyRequest);
+        FocusEmpresaV2ProxyClient proxyClient = this.getProxyClient();
+        return proxyClient.inutilizar(this.getAuth().getBasicAuthorization(), bodyRequest);
+    }*/
+}

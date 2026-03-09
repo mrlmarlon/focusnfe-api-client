@@ -19,7 +19,7 @@ public enum EnvironmentFocusNFeEnum {
      * O ambiente de homologação serve para envio de notas fiscais com a finalidade de teste. As notas emitidas aqui não possuem validade fiscal/tributária.
      * Homologação: http://homologacao.acrasnfe.acras.com.br (note que não é utilizado SSL).
      */
-    HOMOLOGATION("HOMOLOGATION", "http://homologacao.acrasnfe.acras.com.br");
+    HOMOLOGATION("HOMOLOGATION", "https://homologacao.focusnfe.com.br");
 
     private String value;
 
