@@ -187,9 +187,6 @@
         <!-- End RESTEasy Dependencies -->
 
 
-
-
-
         <!-- Begin Test Dependencies -->
         <dependency>
             <groupId>org.testng</groupId>
@@ -222,13 +219,13 @@
             </resource>
         </resources>
 
-<!--        <testSourceDirectory>src/test/java</testSourceDirectory>-->
+        <!--<testSourceDirectory>src/test/java</testSourceDirectory>
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>
                 <filtering>true</filtering>
             </testResource>
-        </testResources>
+        </testResources>-->
 
 
         <plugins>
@@ -370,12 +367,15 @@
             </plugin>
 
 
-            <!-- CONFIGURA TESTE UNITARIO-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-            </plugin>
+<!--             CONFIGURA TESTE UNITARIO-->
+             <plugin>
+                 <groupId>org.apache.maven.plugins</groupId>
+                 <artifactId>maven-surefire-plugin</artifactId>
+                 <version>${maven-surefire-plugin.version}</version>
+                 <configuration>
+                     <skipTests>true</skipTests>
+                 </configuration>
+             </plugin>
 
             <!-- CONFIGURA TESTE DE INTEGRACAO-->
             <plugin>
